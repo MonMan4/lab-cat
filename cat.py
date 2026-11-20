@@ -3,14 +3,20 @@ This program prints stdin to the screen.
 '''
 import sys
 
-def cat(file):
-    data = file.read()
-    sys.stdout.buffer.write(data)
+CHUNK_SIZE = 65536
+
+def cat(file, out):
+    while True:
+        data = file.read(CHUNK_SIZE)
+        if not data:
+            break
+        out.write(data)
 
 if __name__ == "__main__":
+    out = sys.stdout.buffer
     if len(sys.argv) > 1:
         for filename in sys.argv[1:]:
             with open(filename, "rb") as f:
-                cat(f)
+                cat(f, out)
     else:
-        cat(sys.stdin.buffer)
+        cat(sys.stdin.buffer, out)
